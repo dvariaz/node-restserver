@@ -9,7 +9,7 @@ let urlDB;
 if(process.env.NODE_ENV === 'dev') {
     urlDB = 'mongodb://localhost:27017/coffee_shop';
 } else {
-    urlDB = 'mongodb+srv://David:7CYnjMnUn91vQmMG@cluster0-c9bz7.mongodb.net/coffee_shop';
+    urlDB = process.env.MONGO_URI;
 }
 
 process.env.URLDB = urlDB;
