@@ -1,10 +1,11 @@
 const express = require('express');
 const User = require('../models/user');
-const app = express();
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
+const { verifyToken, verifyAdmin } = require('../middlewares/auth');
+const router = express.Router();
 
-app.get('/usuario', (req, res) => {
+router.get('/usuario', verifyToken, (req, res) => {
     let from = Number(req.query.from) || 0;
     let limit = Number(req.query.limit) || 5;
 
@@ -19,7 +20,7 @@ app.get('/usuario', (req, res) => {
                 });
             }
 
-            User.count({ state: true }, (err, count) => {
+            User.countDocuments({ state: true }, (err, count) => {
                 res.json({
                     ok: true,
                     count,
@@ -29,7 +30,7 @@ app.get('/usuario', (req, res) => {
         } );
 })
 
-app.post('/usuario', (req, res) => {
+router.post('/usuario', [verifyToken, verifyAdmin], (req, res) => {
     let body = req.body;
 
     let user = new User({
@@ -54,7 +55,7 @@ app.post('/usuario', (req, res) => {
     })
 })
 
-app.put('/usuario/:id', (req, res) => {
+router.put('/usuario/:id',[ verifyToken, verifyAdmin ], (req, res) => {
     let id = req.params.id;
     let body = _.pick( req.body, ['name', 'email', 'img', 'role', 'state'] );
 
@@ -74,7 +75,7 @@ app.put('/usuario/:id', (req, res) => {
 
 })
 
-app.delete('/usuario/:id', (req, res) => {
+router.delete('/usuario/:id', [verifyToken, verifyAdmin], (req, res) => {
     let id = req.params.id;
 
     //User.findByIdAndRemove(id, (err, deletedUser) => {
@@ -102,4 +103,4 @@ app.delete('/usuario/:id', (req, res) => {
     })
 })
 
-module.exports = app;
+module.exports = router;
