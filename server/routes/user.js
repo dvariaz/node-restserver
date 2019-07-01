@@ -17,7 +17,7 @@ router.get('/usuario', verifyToken, (req, res) => {
                 return res.status(400).json({
                     ok: false,
                     err
-                });
+                })
             }
 
             User.countDocuments({ state: true }, (err, count) => {
@@ -96,7 +96,7 @@ router.delete('/usuario/:id', [verifyToken, verifyAdmin], (req, res) => {
             });
         }
 
-        res.json({
+        res.status(201).json({
             ok: true,
             user: deletedUser
         })
